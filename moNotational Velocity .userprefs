@@ -1,0 +1,15 @@
+﻿<Properties>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Release|x86" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="moNotational Velocity\Configuration.cs">
+    <Files>
+      <File FileName="moNotational Velocity\MainWindow.cs" Line="26" Column="40" />
+      <File FileName="moNotational Velocity\FilesystemNotesStore.cs" Line="29" Column="14" />
+      <File FileName="moNotational Velocity\Note.cs" Line="9" Column="3" />
+      <File FileName="moNotational Velocity\Configuration.cs" Line="16" Column="22" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+</Properties>
