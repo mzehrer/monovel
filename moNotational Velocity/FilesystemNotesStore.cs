@@ -61,7 +61,10 @@ namespace moNotationalVelocity
 			
 			try {
 				QueryParser parser = new QueryParser ("title", analyzer);
-				Query query = parser.Parse (search + "*");
+				
+				string lucsearch = search + "*^4" + " content:" + search + "*";
+				
+				Query query = parser.Parse (lucsearch);
 				IndexSearcher searcher = new IndexSearcher (lucIdx);
 				Hits hits = searcher.Search (query);
 				
@@ -78,11 +81,12 @@ namespace moNotationalVelocity
 			
 			return snotes;
 		}
-		
-		public bool doesNoteExist(string title) {
-			if (new FileInfo(noteStorePath + "/" + title + ".txt").Exists)
+
+		public bool doesNoteExist (string title)
+		{
+			if (new FileInfo (noteStorePath + "/" + title + ".txt").Exists)
 				return true;
-				
+			
 			return false;
 			
 		}
@@ -92,7 +96,7 @@ namespace moNotationalVelocity
 			TextWriter textWriter = new StreamWriter (noteStorePath + "/" + title + ".txt");
 			textWriter.Write ("");
 			textWriter.Close ();
-			getAllNotes();
+			getAllNotes ();
 		}
 
 		public string getNoteContent (string title)

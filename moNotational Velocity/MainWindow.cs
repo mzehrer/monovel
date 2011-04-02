@@ -21,10 +21,10 @@ public partial class MainWindow : Gtk.Window
 		
 		Configuration cfg = new Configuration ();
 		
+		noteslist.NodeSelection.Mode = SelectionMode.Single;
 		noteslist.NodeStore = Store;
-		noteslist.AppendColumn ("Titel", new Gtk.CellRendererText (), "text", 0);
-		noteslist.AppendColumn ("Last modified", new Gtk.CellRendererText (), "text", 1);
-		
+		noteslist.AppendColumn ("Title", new Gtk.CellRendererText (), "text", 0);
+		noteslist.AppendColumn ("Date modified", new Gtk.CellRendererText (), "text", 1);
 		
 		this.notesDirPath = cfg.notesDirPath;
 		
@@ -40,6 +40,8 @@ public partial class MainWindow : Gtk.Window
 		this.KeyPressEvent += new global::Gtk.KeyPressEventHandler (this.OnKeyPressEvent);
 		
 		noteslist.NodeSelection.Changed += new System.EventHandler (OnSelectionChanged);
+		noteslist.KeyPressEvent += new global::Gtk.KeyPressEventHandler (onListKeyEvent);
+		noteslist.ButtonPressEvent += new ButtonPressEventHandler (onListButtonPress);
 		editor.Buffer.Changed += new System.EventHandler (onTextChange);
 		searchbar.Changed += new global::System.EventHandler (onSearchBarChanged);
 		searchbar.KeyPressEvent += new global::Gtk.KeyPressEventHandler (onSearchbarKeyEvent);
@@ -81,6 +83,7 @@ public partial class MainWindow : Gtk.Window
 	protected void loadNotes ()
 	{
 		
+		store.Clear ();
 		notesStore = new FilesystemNotesStore (this.notesDirPath);
 		
 		ArrayList notes = notesStore.getAllNotes ();
@@ -99,9 +102,7 @@ public partial class MainWindow : Gtk.Window
 			Gtk.NodeSelection selection = (Gtk.NodeSelection)o;
 			NoteNode node = (NoteNode)selection.SelectedNode;
 			
-			currentNote = node.Title;
-			buf = editor.Buffer;
-			buf.Text = notesStore.getNoteContent (node.Title);
+			loadNoteToBuffer (node);
 			
 		} catch (Exception e) {
 			Console.WriteLine ("selection changed ERROR: " + e.Message);
@@ -128,6 +129,9 @@ public partial class MainWindow : Gtk.Window
 		if (key.Equals ("Escape")) {
 			searchbar.Text = "";
 			searchbar.GrabFocus ();
+			loadNotes ();
+			currentNote = null;
+			buf.Text = "";
 		}
 	}
 
@@ -138,7 +142,7 @@ public partial class MainWindow : Gtk.Window
 		string key = args.Event.Key.ToString ();
 		Console.WriteLine ("searchbar key: " + key);
 		
-		if (key.Equals ("Return") && !notesStore.doesNoteExist(searchbar.Text.Trim ()) && searchbar.Text != null && searchbar.Text.Length > 0) {
+		if (key.Equals ("Return") && !notesStore.doesNoteExist (searchbar.Text.Trim ()) && searchbar.Text != null && searchbar.Text.Length > 0) {
 			Note newNote = new Note (searchbar.Text.Trim (), "");
 			store.AddNode (new NoteNode (newNote));
 			currentNote = newNote.title;
@@ -146,7 +150,52 @@ public partial class MainWindow : Gtk.Window
 			buf = editor.Buffer;
 			buf.Text = "";
 			editor.GrabFocus ();
+		} else if (key.Equals ("Down") ){
+			noteslist.GrabFocus();	
+			
+		NoteNode node = noteslist.NodeSelection.SelectedNode as NoteNode;
+		
+		loadNoteToBuffer (node);
 		}
+		
+	}
+
+	[ConnectBefore]
+	protected virtual void onListKeyEvent (object o, Gtk.KeyPressEventArgs args)
+	{
+		string key = args.Event.Key.ToString ();
+		Console.WriteLine ("noteslist key: " + key);
+		
+		if (key.Equals ("Return")) {
+			
+			editor.GrabFocus ();
+		}
+		
+	}
+
+	private void loadNoteToBuffer (NoteNode node)
+	{
+		if (node != null && !searchbar.HasFocus) {
+			currentNote = node.Title;
+			searchbar.Text = node.Title;
+			buf = editor.Buffer;
+			buf.Text = notesStore.getNoteContent (node.Title);
+		}
+	}
+
+	[GLib.ConnectBeforeAttribute]
+	protected void onListButtonPress (object sender, ButtonPressEventArgs e)
+	{
+		uint button = e.Event.Button;
+		Console.WriteLine ("noteslist button: " + button);
+		
+		noteslist.GrabFocus ();
+		
+		
+		NoteNode node = noteslist.NodeSelection.SelectedNode as NoteNode;
+		
+		loadNoteToBuffer (node);
+		
 		
 	}
 
@@ -155,23 +204,31 @@ public partial class MainWindow : Gtk.Window
 		Application.Quit ();
 		a.RetVal = true;
 	}
-	
+
 	protected virtual void onSearchBarChanged (object sender, System.EventArgs e)
 	{
-		store.Clear ();
-		string search = searchbar.Text.Trim ();
-		if (search != null && search.Length > 0) {
-			ArrayList notes = notesStore.getNotesMatchingTitle (search);
-			if (notes.Count > 0) {
-				for (int i = 0; i < notes.Count; i++) {
-					Note noteEntry = notes[i] as Note;
-					store.AddNode (new NoteNode (noteEntry));
-				}
-			}
-		} else {
+		string text = searchbar.Text.Trim ();
+		if (text == null || text.Length < 1) {
 			loadNotes ();
+		} else if (searchbar.HasFocus) {
+			store.Clear ();
+			string search = searchbar.Text.Trim ();
+			if (search != null && search.Length > 0) {
+				ArrayList notes = notesStore.getNotesMatchingTitle (search);
+				if (notes.Count > 0) {
+					for (int i = 0; i < notes.Count; i++) {
+						Note noteEntry = notes[i] as Note;
+						NoteNode node = new NoteNode (noteEntry);
+						store.AddNode (node);
+						if (i == 0)
+							noteslist.NodeSelection.SelectNode (node);
+					}
+					
+				}
+			} else {
+				loadNotes ();
+			}
 		}
-		
 	}
 	
 	
