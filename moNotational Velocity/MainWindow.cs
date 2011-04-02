@@ -26,6 +26,8 @@ public partial class MainWindow : Gtk.Window
 		noteslist.AppendColumn ("Title", new Gtk.CellRendererText (), "text", 0);
 		noteslist.AppendColumn ("Date modified", new Gtk.CellRendererText (), "text", 1);
 		
+		editor.WrapMode = WrapMode.Word;
+		
 		this.notesDirPath = cfg.notesDirPath;
 		
 		Console.WriteLine ("Using notes at " + notesDirPath);
@@ -117,6 +119,7 @@ public partial class MainWindow : Gtk.Window
 			
 			string text = buf.Text;
 			notesStore.storeNoteContent (currentNote, text);
+			
 		}
 	}
 
@@ -142,20 +145,24 @@ public partial class MainWindow : Gtk.Window
 		string key = args.Event.Key.ToString ();
 		Console.WriteLine ("searchbar key: " + key);
 		
-		if (key.Equals ("Return") && !notesStore.doesNoteExist (searchbar.Text.Trim ()) && searchbar.Text != null && searchbar.Text.Length > 0) {
-			Note newNote = new Note (searchbar.Text.Trim (), "");
-			store.AddNode (new NoteNode (newNote));
-			currentNote = newNote.title;
-			notesStore.createNote (currentNote);
-			buf = editor.Buffer;
-			buf.Text = "";
-			editor.GrabFocus ();
-		} else if (key.Equals ("Down") ){
-			noteslist.GrabFocus();	
+		if (key.Equals ("Return")) {
 			
-		NoteNode node = noteslist.NodeSelection.SelectedNode as NoteNode;
-		
-		loadNoteToBuffer (node);
+			if (!notesStore.doesNoteExist (searchbar.Text.Trim ()) && searchbar.Text != null && searchbar.Text.Length > 0) {
+				Note newNote = new Note (searchbar.Text.Trim (), "");
+				store.AddNode (new NoteNode (newNote));
+				currentNote = newNote.title;
+				notesStore.createNote (currentNote);
+				buf = editor.Buffer;
+				buf.Text = "";
+				editor.GrabFocus ();
+			}
+			
+		} else if (key.Equals ("Down")) {
+			noteslist.GrabFocus ();
+			
+			NoteNode node = noteslist.NodeSelection.SelectedNode as NoteNode;
+			
+			loadNoteToBuffer (node);
 		}
 		
 	}
@@ -178,8 +185,15 @@ public partial class MainWindow : Gtk.Window
 		if (node != null && !searchbar.HasFocus) {
 			currentNote = node.Title;
 			searchbar.Text = node.Title;
+			loadNoteToBuffer (node.Title);
+		}
+	}
+	
+	private void loadNoteToBuffer (String title)
+	{
+		if (title != null) {
 			buf = editor.Buffer;
-			buf.Text = notesStore.getNoteContent (node.Title);
+			buf.Text = notesStore.getNoteContent (title);
 		}
 	}
 

@@ -7,6 +7,8 @@ public partial class MainWindow
 
 	private global::Gtk.Entry searchbar;
 
+	private global::Gtk.VPaned vpaned1;
+
 	private global::Gtk.ScrolledWindow GtkScrolledWindow1;
 
 	private global::Gtk.NodeView noteslist;
@@ -15,6 +17,8 @@ public partial class MainWindow
 
 	private global::Gtk.TextView editor;
 
+	private global::Gtk.Statusbar statusbar;
+
 	protected virtual void Build ()
 	{
 		global::Stetic.Gui.Initialize (this);
@@ -22,7 +26,7 @@ public partial class MainWindow
 		this.Name = "MainWindow";
 		this.Title = global::Mono.Unix.Catalog.GetString ("moNotational Velocity");
 		this.Icon = global::Stetic.IconLoader.LoadIcon (this, "gtk-edit", global::Gtk.IconSize.Menu);
-		this.WindowPosition = ((global::Gtk.WindowPosition)(4));
+		this.WindowPosition = ((global::Gtk.WindowPosition)(3));
 		this.Gravity = ((global::Gdk.Gravity)(5));
 		// Container child MainWindow.Gtk.Container+ContainerChild
 		this.vbox1 = new global::Gtk.VBox ();
@@ -40,6 +44,11 @@ public partial class MainWindow
 		w1.Expand = false;
 		w1.Fill = false;
 		// Container child vbox1.Gtk.Box+BoxChild
+		this.vpaned1 = new global::Gtk.VPaned ();
+		this.vpaned1.CanFocus = true;
+		this.vpaned1.Name = "vpaned1";
+		this.vpaned1.Position = 112;
+		// Container child vpaned1.Gtk.Paned+PanedChild
 		this.GtkScrolledWindow1 = new global::Gtk.ScrolledWindow ();
 		this.GtkScrolledWindow1.Name = "GtkScrolledWindow1";
 		this.GtkScrolledWindow1.ShadowType = ((global::Gtk.ShadowType)(1));
@@ -48,10 +57,10 @@ public partial class MainWindow
 		this.noteslist.CanFocus = true;
 		this.noteslist.Name = "noteslist";
 		this.GtkScrolledWindow1.Add (this.noteslist);
-		this.vbox1.Add (this.GtkScrolledWindow1);
-		global::Gtk.Box.BoxChild w3 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.GtkScrolledWindow1]));
-		w3.Position = 1;
-		// Container child vbox1.Gtk.Box+BoxChild
+		this.vpaned1.Add (this.GtkScrolledWindow1);
+		global::Gtk.Paned.PanedChild w3 = ((global::Gtk.Paned.PanedChild)(this.vpaned1[this.GtkScrolledWindow1]));
+		w3.Resize = false;
+		// Container child vpaned1.Gtk.Paned+PanedChild
 		this.GtkScrolledWindow = new global::Gtk.ScrolledWindow ();
 		this.GtkScrolledWindow.Name = "GtkScrolledWindow";
 		this.GtkScrolledWindow.ShadowType = ((global::Gtk.ShadowType)(1));
@@ -60,15 +69,25 @@ public partial class MainWindow
 		this.editor.CanFocus = true;
 		this.editor.Name = "editor";
 		this.GtkScrolledWindow.Add (this.editor);
-		this.vbox1.Add (this.GtkScrolledWindow);
-		global::Gtk.Box.BoxChild w5 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.GtkScrolledWindow]));
-		w5.Position = 2;
+		this.vpaned1.Add (this.GtkScrolledWindow);
+		this.vbox1.Add (this.vpaned1);
+		global::Gtk.Box.BoxChild w6 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.vpaned1]));
+		w6.Position = 1;
+		// Container child vbox1.Gtk.Box+BoxChild
+		this.statusbar = new global::Gtk.Statusbar ();
+		this.statusbar.Name = "statusbar";
+		this.statusbar.Spacing = 6;
+		this.vbox1.Add (this.statusbar);
+		global::Gtk.Box.BoxChild w7 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.statusbar]));
+		w7.Position = 2;
+		w7.Expand = false;
+		w7.Fill = false;
 		this.Add (this.vbox1);
 		if ((this.Child != null)) {
 			this.Child.ShowAll ();
 		}
-		this.DefaultWidth = 529;
-		this.DefaultHeight = 342;
+		this.DefaultWidth = 591;
+		this.DefaultHeight = 415;
 		this.Show ();
 		this.DeleteEvent += new global::Gtk.DeleteEventHandler (this.OnDeleteEvent);
 	}
