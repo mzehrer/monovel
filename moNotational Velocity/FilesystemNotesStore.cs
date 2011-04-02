@@ -6,6 +6,7 @@ using Lucene.Net.Index;
 using Lucene.Net.Documents;
 using Lucene.Net.QueryParsers;
 using Lucene.Net.Search;
+using System.Runtime.CompilerServices;
 
 namespace moNotationalVelocity
 {
@@ -21,7 +22,7 @@ namespace moNotationalVelocity
 		{
 			this.noteStorePath = path;
 			
-
+			
 			lucIdx = new Lucene.Net.Store.RAMDirectory ();
 			IndexWriter writer = new IndexWriter (lucIdx, analyzer, true);
 			
@@ -37,7 +38,9 @@ namespace moNotationalVelocity
 				Document doc = new Document ();
 				doc.Add (new Field ("title", noteTitle, true, true, true));
 				doc.Add (new Field ("lastmod", noteLastMod, true, true, true));
-				doc.Add (new Field ("content", getNoteContent (noteTitle), false, true, true, true));
+				string content = getNoteContent (noteTitle);
+				if (content != null && content.Length > 0)
+					doc.Add (new Field ("content", content, false, true, true, true));
 				writer.AddDocument (doc);
 			}
 			
@@ -75,13 +78,38 @@ namespace moNotationalVelocity
 			
 			return snotes;
 		}
+		
+		public bool doesNoteExist(string title) {
+			if (new FileInfo(noteStorePath + "/" + title + ".txt").Exists)
+				return true;
+				
+			return false;
+			
+		}
+
+		public void createNote (string title)
+		{
+			TextWriter textWriter = new StreamWriter (noteStorePath + "/" + title + ".txt");
+			textWriter.Write ("");
+			textWriter.Close ();
+			getAllNotes();
+		}
 
 		public string getNoteContent (string title)
 		{
 			StreamReader streamReader = new StreamReader (noteStorePath + "/" + title + ".txt");
 			string text = streamReader.ReadToEnd ();
+			streamReader.Close ();
 			return text;
 			
+		}
+
+		[MethodImpl(MethodImplOptions.Synchronized)]
+		public void storeNoteContent (string title, string content)
+		{
+			TextWriter textWriter = new StreamWriter (noteStorePath + "/" + title + ".txt");
+			textWriter.Write (content);
+			textWriter.Close ();
 		}
 		
 	}

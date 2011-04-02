@@ -1,5 +1,6 @@
 using System;
 using Gtk;
+using GLib;
 using moNotationalVelocity;
 using System.Collections;
 
@@ -10,6 +11,9 @@ public partial class MainWindow : Gtk.Window
 
 	private string notesDirPath;
 	private NotesStore notesStore;
+
+	private TextBuffer buf;
+	private string currentNote;
 
 	public MainWindow () : base(Gtk.WindowType.Toplevel)
 	{
@@ -33,10 +37,14 @@ public partial class MainWindow : Gtk.Window
 		
 		loadNotes ();
 		
+		this.KeyPressEvent += new global::Gtk.KeyPressEventHandler (this.OnKeyPressEvent);
+		
 		noteslist.NodeSelection.Changed += new System.EventHandler (OnSelectionChanged);
+		editor.Buffer.Changed += new System.EventHandler (onTextChange);
+		searchbar.Changed += new global::System.EventHandler (onSearchBarChanged);
+		searchbar.KeyPressEvent += new global::Gtk.KeyPressEventHandler (onSearchbarKeyEvent);
 		
 		searchbar.GrabFocus ();
-		
 	}
 
 	[TreeNode(ListOnly = true)]
@@ -60,7 +68,6 @@ public partial class MainWindow : Gtk.Window
 			
 		}
 	}
-
 
 	Gtk.NodeStore Store {
 		get {
@@ -86,23 +93,29 @@ public partial class MainWindow : Gtk.Window
 		
 	}
 
-
-	protected void OnDeleteEvent (object sender, DeleteEventArgs a)
-	{
-		Application.Quit ();
-		a.RetVal = true;
-	}
-
 	void OnSelectionChanged (object o, System.EventArgs args)
 	{
 		try {
 			Gtk.NodeSelection selection = (Gtk.NodeSelection)o;
 			NoteNode node = (NoteNode)selection.SelectedNode;
 			
-			TextBuffer buf = editor.Buffer;
+			currentNote = node.Title;
+			buf = editor.Buffer;
 			buf.Text = notesStore.getNoteContent (node.Title);
+			
 		} catch (Exception e) {
-			Console.WriteLine (e.Message);
+			Console.WriteLine ("selection changed ERROR: " + e.Message);
+		}
+	}
+
+	protected virtual void onTextChange (object o, System.EventArgs args)
+	{
+		if (currentNote != null) {
+			
+			Console.WriteLine ("Storing note " + currentNote);
+			
+			string text = buf.Text;
+			notesStore.storeNoteContent (currentNote, text);
 		}
 	}
 
@@ -110,20 +123,40 @@ public partial class MainWindow : Gtk.Window
 	{
 		
 		string key = args.Event.Key.ToString ();
-		Console.WriteLine (key);
+		Console.WriteLine ("global key: " + key);
 		
 		if (key.Equals ("Escape")) {
-			searchbar.GrabFocus ();
-		} else if (key.Equals ("s") && noteslist.HasFocus) {
+			searchbar.Text = "";
 			searchbar.GrabFocus ();
 		}
+	}
+
+	[ConnectBefore]
+	protected virtual void onSearchbarKeyEvent (object o, Gtk.KeyPressEventArgs args)
+	{
 		
+		string key = args.Event.Key.ToString ();
+		Console.WriteLine ("searchbar key: " + key);
 		
-		
+		if (key.Equals ("Return") && !notesStore.doesNoteExist(searchbar.Text.Trim ()) && searchbar.Text != null && searchbar.Text.Length > 0) {
+			Note newNote = new Note (searchbar.Text.Trim (), "");
+			store.AddNode (new NoteNode (newNote));
+			currentNote = newNote.title;
+			notesStore.createNote (currentNote);
+			buf = editor.Buffer;
+			buf.Text = "";
+			editor.GrabFocus ();
+		}
 		
 	}
 
-	protected virtual void OnChanged (object sender, System.EventArgs e)
+	protected void OnDeleteEvent (object sender, DeleteEventArgs a)
+	{
+		Application.Quit ();
+		a.RetVal = true;
+	}
+	
+	protected virtual void onSearchBarChanged (object sender, System.EventArgs e)
 	{
 		store.Clear ();
 		string search = searchbar.Text.Trim ();
@@ -134,19 +167,10 @@ public partial class MainWindow : Gtk.Window
 					Note noteEntry = notes[i] as Note;
 					store.AddNode (new NoteNode (noteEntry));
 				}
-			} else {
-				loadNotes ();
 			}
 		} else {
 			loadNotes ();
 		}
-		
-	}
-
-	protected virtual void onSearchKey (object o, Gtk.KeyPressEventArgs args)
-	{
-		
-		
 		
 	}
 	

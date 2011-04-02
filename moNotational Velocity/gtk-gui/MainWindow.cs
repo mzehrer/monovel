@@ -67,12 +67,9 @@ public partial class MainWindow
 		if ((this.Child != null)) {
 			this.Child.ShowAll ();
 		}
-		this.DefaultWidth = 945;
-		this.DefaultHeight = 750;
+		this.DefaultWidth = 529;
+		this.DefaultHeight = 342;
 		this.Show ();
 		this.DeleteEvent += new global::Gtk.DeleteEventHandler (this.OnDeleteEvent);
-		this.KeyPressEvent += new global::Gtk.KeyPressEventHandler (this.OnKeyPressEvent);
-		this.searchbar.Changed += new global::System.EventHandler (this.OnChanged);
-		this.searchbar.KeyPressEvent += new global::Gtk.KeyPressEventHandler (this.onSearchKey);
 	}
 }
