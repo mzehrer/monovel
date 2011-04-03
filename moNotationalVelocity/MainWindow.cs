@@ -174,8 +174,13 @@ public partial class MainWindow : Gtk.Window
 		Console.WriteLine ("noteslist key: " + key);
 		
 		if (key.Equals ("Return")) {
-			
 			editor.GrabFocus ();
+		} else if (key.Equals ("d")) {
+			NoteNode node = noteslist.NodeSelection.SelectedNode as NoteNode;
+			if (node != null) {
+				noteslist.NodeStore.RemoveNode (node);
+				notesStore.deleteNote (node.Title);
+			}
 		}
 		
 	}
@@ -188,7 +193,7 @@ public partial class MainWindow : Gtk.Window
 			loadNoteToBuffer (node.Title);
 		}
 	}
-	
+
 	private void loadNoteToBuffer (String title)
 	{
 		if (title != null) {

@@ -1,7 +1,11 @@
 ﻿<Properties>
   <AuthorInfo Name="Michael Zehrer" Email="zehrer@zepan.org" Copyright="Michael Zehrer" ctype="AuthorInformation" />
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" ctype="Workspace" />
-  <MonoDevelop.Ide.Workbench ctype="Workbench" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="moNotationalVelocity/NotesStore.cs" ctype="Workbench">
+    <Files>
+      <File FileName="moNotationalVelocity/NotesStore.cs" Line="1" Column="1" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore />
   </MonoDevelop.Ide.DebuggingService.Breakpoints>

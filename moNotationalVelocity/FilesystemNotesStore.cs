@@ -21,31 +21,7 @@ namespace moNotationalVelocity
 		public FilesystemNotesStore (string path)
 		{
 			this.noteStorePath = path;
-			
-			
-			lucIdx = new Lucene.Net.Store.RAMDirectory ();
-			IndexWriter writer = new IndexWriter (lucIdx, analyzer, true);
-			
-			
-			DirectoryInfo di = new DirectoryInfo (noteStorePath);
-			FileInfo[] rgFiles = di.GetFiles ("*.txt");
-			foreach (FileInfo fi in rgFiles) {
-				
-				string noteTitle = Path.GetFileNameWithoutExtension (fi.FullName);
-				string noteLastMod = fi.LastAccessTime.ToShortDateString ();
-				
-				notes.Add (new Note (noteTitle, noteLastMod));
-				Document doc = new Document ();
-				doc.Add (new Field ("title", noteTitle, true, true, true));
-				doc.Add (new Field ("lastmod", noteLastMod, true, true, true));
-				string content = getNoteContent (noteTitle);
-				if (content != null && content.Length > 0)
-					doc.Add (new Field ("content", content, false, true, true, true));
-				writer.AddDocument (doc);
-			}
-			
-			writer.Optimize ();
-			writer.Close ();
+			ReLoadNotes();
 			
 		}
 
@@ -96,7 +72,7 @@ namespace moNotationalVelocity
 			TextWriter textWriter = new StreamWriter (noteStorePath + "/" + title + ".txt");
 			textWriter.Write ("");
 			textWriter.Close ();
-			getAllNotes ();
+			ReLoadNotes();
 		}
 
 		public string getNoteContent (string title)
@@ -108,6 +84,15 @@ namespace moNotationalVelocity
 			
 		}
 
+        public void deleteNote (string title)
+        {
+            FileInfo noteFile = new FileInfo (noteStorePath + "/" + title + ".txt");
+			if (noteFile.Exists)
+                noteFile.Delete();
+			
+			ReLoadNotes();
+        }
+
 		[MethodImpl(MethodImplOptions.Synchronized)]
 		public void storeNoteContent (string title, string content)
 		{
@@ -116,6 +101,33 @@ namespace moNotationalVelocity
 			textWriter.Close ();
 		}
 		
-	}
+
+		private void  ReLoadNotes()
+		{
+			
+			lucIdx = new Lucene.Net.Store.RAMDirectory ();
+			IndexWriter writer = new IndexWriter (lucIdx, analyzer, true);
+			
+			DirectoryInfo di = new DirectoryInfo (noteStorePath);
+			FileInfo[] rgFiles = di.GetFiles ("*.txt");
+			foreach (FileInfo fi in rgFiles) {
+				
+				string noteTitle = Path.GetFileNameWithoutExtension (fi.FullName);
+				string noteLastMod = fi.LastAccessTime.ToShortDateString ();
+				
+				notes.Add (new Note (noteTitle, noteLastMod));
+				Document doc = new Document ();
+				doc.Add (new Field ("title", noteTitle, true, true, true));
+				doc.Add (new Field ("lastmod", noteLastMod, true, true, true));
+				string content = getNoteContent (noteTitle);
+				if (content != null && content.Length > 0)
+					doc.Add (new Field ("content", content, false, true, true, true));
+				writer.AddDocument (doc);
+			}
+			
+			writer.Optimize ();
+			writer.Close ();
+		}
+}
 }
 
