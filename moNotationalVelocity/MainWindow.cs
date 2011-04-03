@@ -130,11 +130,7 @@ public partial class MainWindow : Gtk.Window
 		Console.WriteLine ("global key: " + key);
 		
 		if (key.Equals ("Escape")) {
-			searchbar.Text = "";
-			searchbar.GrabFocus ();
-			loadNotes ();
-			currentNote = null;
-			buf.Text = "";
+			GoBackToSearch();
 		}
 	}
 
@@ -178,11 +174,28 @@ public partial class MainWindow : Gtk.Window
 		} else if (key.Equals ("d")) {
 			NoteNode node = noteslist.NodeSelection.SelectedNode as NoteNode;
 			if (node != null) {
-				noteslist.NodeStore.RemoveNode (node);
-				notesStore.deleteNote (node.Title);
+				MessageDialog md = new MessageDialog (this, DialogFlags.DestroyWithParent, MessageType.Question, ButtonsType.YesNo, "Are you sure you want to delete the note " + node.Title + "" + "?");
+				ResponseType result = (ResponseType)md.Run ();
+				
+				if (result == ResponseType.Yes) {
+					noteslist.NodeStore.RemoveNode (node);
+					notesStore.deleteNote (node.Title);
+					GoBackToSearch();
+				}
+				md.Destroy ();
+				
 			}
 		}
 		
+	}
+
+	private void  GoBackToSearch()
+	{
+		searchbar.Text = "";
+		searchbar.GrabFocus ();
+		loadNotes ();
+		currentNote = null;
+		buf.Text = "";
 	}
 
 	private void loadNoteToBuffer (NoteNode node)
