@@ -12,6 +12,7 @@ namespace moNotationalVelocity
 		void storeNoteContent (string title, string content);
 		void createNote(string title);
 		bool doesNoteExist(string title); 
+		void deleteNote (string title);
 		
 	}
 }
