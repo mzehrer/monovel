@@ -24,7 +24,7 @@
           </Builder>
         </Package>
         <Package name="Tarball">
-          <Builder TargetDirectory="moNotationalVelocity" DefaultConfiguration="Release|x86" GenerateAutotools="false" ctype="TarballDeployTarget">
+          <Builder TargetDirectory="moNotationalVelocity" DefaultConfiguration="Release|x86" ctype="TarballDeployTarget">
             <ChildEntries>
               <SolutionItemReference path="moNotationalVelocity\moNotationalVelocity.csproj" />
             </ChildEntries>
