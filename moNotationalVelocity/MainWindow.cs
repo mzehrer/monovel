@@ -130,7 +130,7 @@ public partial class MainWindow : Gtk.Window
 		Console.WriteLine ("global key: " + key);
 		
 		if (key.Equals ("Escape")) {
-			GoBackToSearch();
+			GoBackToSearch ();
 		}
 	}
 
@@ -169,10 +169,11 @@ public partial class MainWindow : Gtk.Window
 		string key = args.Event.Key.ToString ();
 		Console.WriteLine ("noteslist key: " + key);
 		
+		NoteNode node = noteslist.NodeSelection.SelectedNode as NoteNode;
+		
 		if (key.Equals ("Return")) {
 			editor.GrabFocus ();
-		} else if (key.Equals ("d")) {
-			NoteNode node = noteslist.NodeSelection.SelectedNode as NoteNode;
+		} else if (key.Equals ("d") || key.Equals ("Delete")) {
 			if (node != null) {
 				MessageDialog md = new MessageDialog (this, DialogFlags.DestroyWithParent, MessageType.Question, ButtonsType.YesNo, "Are you sure you want to delete the note " + node.Title + "" + "?");
 				ResponseType result = (ResponseType)md.Run ();
@@ -180,16 +181,34 @@ public partial class MainWindow : Gtk.Window
 				if (result == ResponseType.Yes) {
 					noteslist.NodeStore.RemoveNode (node);
 					notesStore.deleteNote (node.Title);
-					GoBackToSearch();
+					GoBackToSearch ();
 				}
 				md.Destroy ();
 				
+			}
+		} else if (key.Equals ("r")) {
+			if (node != null) {
+				RenameNote renameDialog = new RenameNote ();
+				renameDialog.NoteTitle = node.Title;
+				renameDialog.init ();
+				ResponseType result = (ResponseType)renameDialog.Run ();
+				
+				if (result == ResponseType.Ok) {
+					string newTitle = renameDialog.NoteTitle.Trim();
+					Console.WriteLine ("Response: " + newTitle);
+					
+					if (newTitle != null && newTitle.Length > 0 && !newTitle.Equals (node.Title)) {
+						notesStore.RenameNote (node.Title, newTitle);
+						node.Title = newTitle;
+					}
+				}
+				renameDialog.Destroy ();
 			}
 		}
 		
 	}
 
-	private void  GoBackToSearch()
+	private void GoBackToSearch ()
 	{
 		searchbar.Text = "";
 		searchbar.GrabFocus ();

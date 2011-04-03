@@ -77,6 +77,8 @@
     <Compile Include="NotesStore.cs" />
     <Compile Include="FilesystemNotesStore.cs" />
     <Compile Include="Configuration.cs" />
+    <Compile Include="RenameNote.cs" />
+    <Compile Include="gtk-gui\moNotationalVelocity.RenameNote.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>

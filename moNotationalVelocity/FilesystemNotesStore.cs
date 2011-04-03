@@ -83,6 +83,11 @@ namespace moNotationalVelocity
 			return text;
 			
 		}
+		
+		public void RenameNote(string oldTitle, string newTitle){
+			File.Move(noteStorePath + "/" + oldTitle + ".txt", noteStorePath + "/" + newTitle + ".txt");
+			ReLoadNotes();	
+		}
 
         public void deleteNote (string title)
         {
