@@ -1,0 +1,3 @@
+This is monovel aka. moNotational Velocity, a port of the popular OSX application Notational Velocity [http://notational.net/]. Notational Velocity is a really cool tool for speedy management of plain text notes. Sadly it's not avalable for Linux, so I started this port using Mono and GTkSharp.
+
+This application is in an alpha stage.
