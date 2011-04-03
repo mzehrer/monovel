@@ -1,0 +1,11 @@
+
+[Desktop Entry]
+Encoding=UTF-8
+Type=Application
+Name=monovel
+Exec=monovel
+Terminal=false
+
+GenericName=moNotational Velocity
+Comment=Fast plain text notes
+Categories=Office;Utility;

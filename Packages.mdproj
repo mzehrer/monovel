@@ -8,27 +8,27 @@
     <Packages>
       <Packages>
         <Package name="Linux Binärdateien">
-          <Builder targetFile="moNotational Velocity -linux.tar.gz" platform="Linux" configuration="Debug|x86" ctype="BinariesZipPackageBuilder">
+          <Builder targetFile="moNotationalVelocity-linux.tar.gz" platform="Linux" configuration="Release|x86" ctype="BinariesZipPackageBuilder">
             <ChildEntries>
-              <SolutionItemReference path="moNotational Velocity\moNotational Velocity .csproj" />
+              <SolutionItemReference path="moNotationalVelocity\moNotationalVelocity.csproj" />
             </ChildEntries>
-            <RootEntry path="moNotational Velocity .sln" id=":root:" />
+            <RootEntry path="moNotationalVelocity.sln" id=":root:" />
           </Builder>
         </Package>
         <Package name="Microsoft Windows Binärdateien">
-          <Builder targetFile="moNotational Velocity -windows.tar.gz" platform="Windows" configuration="Debug|x86" ctype="BinariesZipPackageBuilder">
+          <Builder targetFile="moNotationalVelocity.tar.gz" platform="Windows" configuration="Release|x86" ctype="BinariesZipPackageBuilder">
             <ChildEntries>
-              <SolutionItemReference path="moNotational Velocity\moNotational Velocity .csproj" />
+              <SolutionItemReference path="moNotationalVelocity\moNotationalVelocity.csproj" />
             </ChildEntries>
-            <RootEntry path="moNotational Velocity .sln" id=":root:" />
+            <RootEntry path="moNotationalVelocity.sln" id=":root:" />
           </Builder>
         </Package>
         <Package name="Tarball">
-          <Builder TargetDirectory="moNotational Velocity" DefaultConfiguration="Debug|x86" ctype="TarballDeployTarget">
+          <Builder TargetDirectory="moNotationalVelocity" DefaultConfiguration="Release|x86" ctype="TarballDeployTarget">
             <ChildEntries>
-              <SolutionItemReference path="moNotational Velocity\moNotational Velocity .csproj" />
+              <SolutionItemReference path="moNotationalVelocity\moNotationalVelocity.csproj" />
             </ChildEntries>
-            <RootEntry path="moNotational Velocity .sln" id=":root:" />
+            <RootEntry path="moNotationalVelocity.sln" id=":root:" />
           </Builder>
         </Package>
       </Packages>
